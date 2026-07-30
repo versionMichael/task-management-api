@@ -11,3 +11,4 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
 
     projects = relationship("Project", back_populates="owner")
+    assigned_tasks = relationship("Task", back_populates="assignee")
