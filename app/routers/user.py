@@ -65,13 +65,13 @@ def update_user(user_id: int, updated_user: UserCreate):
     user.hashed_password = updated_user.password
 
     db.commit()
-    db.refresh(User)
+    db.refresh(user)
 
     db.close()
 
     return user
 
-router.delete("/{user_id}")
+@router.delete("/{user_id}")
 def delete_user(user_id: int):
     db = SessionLocal()
 
