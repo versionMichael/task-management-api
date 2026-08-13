@@ -6,6 +6,8 @@ from app.models.project import Project
 from app.models.task import Task
 
 from app.routers.user import router as user_router
+from app.routers.project import router as project_router
+from app.routers.task import router  as task_router
 
 app = FastAPI()
 
@@ -16,3 +18,5 @@ def root():
     return {"message": "Task Management API"}
 
 app.include_router(user_router)
+app.include_router(project_router)
+app.include_router(task_router)
