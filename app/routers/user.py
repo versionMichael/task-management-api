@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.database import SessionLocal
 from app.models.user import User
 from app.schemas import UserCreate, UserResponse, ProjectResponse, TaskResponse
+from app.utils.security import hash_password
 
 
 router = APIRouter(
@@ -40,7 +41,7 @@ def create_user(user: UserCreate):
     new_user = User(
         username= user.username,
         email=user.email,
-        hashed_password=user.password
+        hashed_password=hash_password(user.password)
     )
 
     db.add(new_user)
