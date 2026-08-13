@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.database import SessionLocal
 from app.models.task import Task
 from app.schemas import TaskResponse, TaskCreate, UserResponse
+from app.models.user import User
+from app.utils.auth import get_current_user
+from app.models.project import Project
 
 router= APIRouter(
     prefix="/tasks",
@@ -9,14 +12,17 @@ router= APIRouter(
 )
 
 @router.get("/",response_model=list[TaskResponse])
-def get_tasks():
+def get_tasks(current_user: User = Depends(get_current_user)):
     db = SessionLocal()
-    tasks= db.query(Task).all()
+
+    tasks= (
+        db.query(Task).join(Task.project).filter(Task.project.has(owner_id=current_user.id)).all())
+    
     db.close()
     return tasks
 
 @router.get("/{task_id}", response_model=TaskResponse)
-def get_task(task_id: int):
+def get_task(task_id: int, current_user: User = Depends(get_current_user)):
 
     db = SessionLocal()
 
@@ -26,14 +32,34 @@ def get_task(task_id: int):
         db.close()
         raise HTTPException(status_code=404, detail="Task not found")
 
+    if task.project.owner_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to access this task"
+        )
+
     db.close()
 
     return task
 
 
 @router.post("/", response_model=TaskResponse)
-def create_task(task: TaskCreate):
+def create_task(task: TaskCreate, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
+
+    project = db.query(Project).filter(Project.id == task.project_id).first()
+
+    if not project:
+        db.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    if project.owner_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to create a task in this project"
+        ) 
 
     new_task= Task(
         title=task.title,
@@ -51,7 +77,7 @@ def create_task(task: TaskCreate):
     return new_task
 
 @router.put("/{task_id}", response_model=TaskResponse)
-def update_task(task_id: int, updated_task: TaskCreate):
+def update_task(task_id: int, updated_task: TaskCreate, current_user : User = Depends(get_current_user)):
 
     db= SessionLocal()
 
@@ -61,6 +87,30 @@ def update_task(task_id: int, updated_task: TaskCreate):
         db.close()
         raise HTTPException(status_code=404, detail="Task not found")
 
+    if task.project.owner_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to update this task"
+        )
+
+    if updated_task.project_id!= task.project_id:
+        new_project = db.query(Project).filter(Project.id==updated_task.project_id).first()
+
+        if not new_project:
+            db.close()
+            raise HTTPException(
+                status_code=404,
+                detail="New project not found"
+            )
+
+        if new_project.owner_id != current_user.id:
+            db.close()
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized to move task to this project"
+            )
+            
     task.title = updated_task.title
     task.description = updated_task.description
     task.project_id = updated_task.project_id
@@ -73,7 +123,7 @@ def update_task(task_id: int, updated_task: TaskCreate):
     return task
 
 @router.delete("/{task_id}")
-def delete_task(task_id: int):
+def delete_task(task_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     task = db.query(Task).filter(Task.id==task_id).first()
@@ -81,6 +131,13 @@ def delete_task(task_id: int):
     if not task:
         db.close()
         raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.project.owner_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to delete this task"
+        )
 
     db.delete(task)
     db.commit()
@@ -90,7 +147,7 @@ def delete_task(task_id: int):
     return {"message": "Task deleted successfully"}
 
 @router.get("/{task_id}/user", response_model=UserResponse)
-def get_task_user(task_id: int):
+def get_task_user(task_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     task = db.query(Task).filter(Task.id == task_id).first()
@@ -98,6 +155,13 @@ def get_task_user(task_id: int):
     if not task:
         db.close()
         raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.project.owner_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to access this task's user"
+        )
 
     user = task.assignee
 

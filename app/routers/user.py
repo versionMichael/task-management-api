@@ -1,17 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.database import SessionLocal
 from app.models.user import User
-from app.schemas import UserCreate, UserResponse, ProjectResponse, TaskResponse
+from app.schemas import UserCreate, UserResponse, ProjectResponse, TaskResponse, UserListResponse
 from app.utils.security import hash_password
-
+from app.utils.auth import get_current_user
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
-@router.get("/", response_model=list[UserResponse])
-def get_users():
+@router.get("/", response_model=list[UserListResponse])
+def get_users(current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     users = db.query(User).all()
@@ -21,7 +21,7 @@ def get_users():
     return users
 
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: int):
+def get_user(user_id: int, current_user: User = Depends(get_current_user)):
     db = SessionLocal()
 
     user = db.query(User).filter(User.id== user_id).first()
@@ -29,6 +29,13 @@ def get_user(user_id: int):
     if not user:
         db.close()
         raise HTTPException(status_code=404, detail="User not found")
+
+    if user.id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to access this user"
+        )
 
     db.close()
 
@@ -53,7 +60,7 @@ def create_user(user: UserCreate):
     return new_user
 
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user(user_id: int, updated_user: UserCreate):
+def update_user(user_id: int, updated_user: UserCreate, current_user : User=Depends(get_current_user)):
     db = SessionLocal()
 
     user = db.query(User).filter(User.id == user_id).first()
@@ -62,9 +69,16 @@ def update_user(user_id: int, updated_user: UserCreate):
         db.close()
         raise HTTPException(status_code=404, detail="User not found")
 
+    if user.id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to update this user"
+        )
+
     user.username = updated_user.username
     user.email = updated_user.email
-    user.hashed_password = updated_user.password
+    user.hashed_password = hash_password(updated_user.password)
 
     db.commit()
     db.refresh(user)
@@ -74,7 +88,7 @@ def update_user(user_id: int, updated_user: UserCreate):
     return user
 
 @router.delete("/{user_id}")
-def delete_user(user_id: int):
+def delete_user(user_id: int, current_user : User = Depends(get_current_user)):
     db = SessionLocal()
 
     user = db.query(User).filter(User.id==user_id).first()
@@ -83,17 +97,31 @@ def delete_user(user_id: int):
         db.close()
         raise HTTPException(status_code=404, detail="User not found")
 
+    if user.id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to delete this user"
+        )
+
     db.delete(user)
     db.commit()
 
     db.close()
 
-    return {"Message": "User deleted successfully"}
+    return {"message": "User deleted successfully"}
 
 
 @router.get("/{user_id}/projects", response_model=list[ProjectResponse])
-def get_user_projects(user_id: int):
+def get_user_projects(user_id: int, current_user : User = Depends(get_current_user)):
     db = SessionLocal()
+
+    if user_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to access this user's projects"
+        )
 
     user = db.query(User).filter(User.id==user_id).first()
 
@@ -108,9 +136,17 @@ def get_user_projects(user_id: int):
     return projects
 
 @router.get("/{user_id}/tasks", response_model=list[TaskResponse])
-def get_user_tasks(user_id: int):
+def get_user_tasks(user_id: int, current_user: User = Depends(get_current_user)):
 
     db= SessionLocal()
+
+    if user_id != current_user.id:
+        db.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to access this user's tasks"
+        )
+
 
     user= db.query(User).filter(User.id== user_id).first()
 
