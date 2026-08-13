@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.database import SessionLocal
 from app.models.project import Project
-from app.schemas import ProjectResponse, ProjectCreate
+from app.schemas import ProjectResponse, ProjectCreate, TaskResponse
 
 router = APIRouter(
     prefix="/projects",
@@ -87,3 +87,20 @@ def delete_project(project_id: int):
     db.close()
 
     return {"message" : "Project deleted successfully"}
+
+
+@router.get("/{project_id}/tasks", response_model=list[TaskResponse])
+def get_project_tasks(project_id: int):
+    db = SessionLocal()
+
+    project = db.query(Project).filter(Project.id == project_id).first()
+
+    if not project:
+        db.close()
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    tasks = project.tasks
+
+    db.close()
+
+    return tasks

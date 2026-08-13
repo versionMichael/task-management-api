@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.database import SessionLocal
 from app.models.task import Task
-from app.schemas import TaskResponse, TaskCreate
+from app.schemas import TaskResponse, TaskCreate, UserResponse
 
 router= APIRouter(
     prefix="/tasks",
@@ -88,3 +88,19 @@ def delete_task(task_id: int):
     db.close()
 
     return {"message": "Task deleted successfully"}
+
+@router.get("/{task_id}/user", response_model=UserResponse)
+def get_task_user(task_id: int):
+    db = SessionLocal()
+
+    task = db.query(Task).filter(Task.id == task_id).first()
+
+    if not task:
+        db.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    user = task.assignee
+
+    db.close()
+
+    return user
