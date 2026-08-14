@@ -1,7 +1,7 @@
+.env
+.env.test
 .venv/
 __pycache__/
 *.pyc
-.env
-.env.test
 .pytest_cache/
-.env.docker
+.git/
