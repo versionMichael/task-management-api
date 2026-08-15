@@ -2,8 +2,7 @@
 
 A RESTful task management backend built with **FastAPI**, **PostgreSQL**, **SQLAlchemy**, and **JWT authentication**.
 
-The API allows authenticated users to create and manage projects and
-tasks while enforcing ownership and authorization rules.
+The API allows authenticated users to create and manage projects and tasks while enforcing ownership and authorization rules.
 
 **Live API:** https://task-management-api-production-47aa.up.railway.app
 
@@ -11,82 +10,70 @@ tasks while enforcing ownership and authorization rules.
 
 ---
 
-------------------------------------------------------------------------
-
 ## 🚀 Features
 
--   User registration and authentication
--   JWT-based authentication
--   Password hashing
--   User management
--   Project CRUD operations
--   Task CRUD operations
--   Assign tasks to users
--   Move tasks between projects
--   Project and task ownership authorization
--   Pydantic request and response validation
--   PostgreSQL database
--   SQLAlchemy ORM
--   Automated API testing with pytest
--   Separate PostgreSQL test database
--   Environment variable configuration
--   Dockerized FastAPI application
--   Docker Compose for FastAPI and PostgreSQL
--   Persistent PostgreSQL storage with Docker volumes
--   PostgreSQL health checks
+- User registration and authentication
+- JWT-based authentication
+- Password hashing
+- User management
+- Project CRUD operations
+- Task CRUD operations
+- Assign tasks to users
+- Move tasks between projects
+- Project and task ownership authorization
+- Pydantic request and response validation
+- PostgreSQL database
+- SQLAlchemy ORM
+- Automated API testing with pytest
+- Separate PostgreSQL test database
+- Environment variable configuration
+- Dockerized FastAPI application
+- Docker Compose for FastAPI and PostgreSQL
+- Persistent PostgreSQL storage with Docker volumes
+- PostgreSQL health checks
 
-------------------------------------------------------------------------
+---
 
 ## 🛠️ Tech Stack
 
--   **Python**
--   **FastAPI**
--   **PostgreSQL**
--   **SQLAlchemy**
--   **Pydantic**
--   **JWT**
--   **pwdlib**
--   **pytest**
--   **python-dotenv**
--   **Uvicorn**
--   **Docker**
--   **Docker Compose**
+- **Python**
+- **FastAPI**
+- **PostgreSQL**
+- **SQLAlchemy**
+- **Pydantic**
+- **JWT**
+- **pwdlib**
+- **pytest**
+- **python-dotenv**
+- **Uvicorn**
+- **Docker**
+- **Docker Compose**
 
-------------------------------------------------------------------------
+---
+
+## 📸 Screenshots
+
+### API Documentation
+![Swagger API Documentation](screenshots/swagger.png)
+
+### Automated Tests
+![33 Tests Passed](screenshots/tests.png)
+
+### Dockerized Deployment
+![Docker FastAPI and PostgreSQL](screenshots/docker.png)
+
+---
 
 ## 📁 Project Structure
 
-``` text
+```text
 task-management-api/
-│
 ├── app/
-│   ├── core/
-│   ├── models/
-│   │   ├── project.py
-│   │   ├── task.py
-│   │   └── user.py
-│   ├── routers/
-│   │   ├── auth.py
-│   │   ├── project.py
-│   │   ├── task.py
-│   │   └── user.py
-│   ├── schemas/
-│   │   ├── project.py
-│   │   ├── task.py
-│   │   └── user.py
-│   ├── services/
-│   ├── utils/
-│   │   └── auth.py
-│   ├── database.py
-│   └── main.py
-│
 ├── tests/
-│   ├── conftest.py
-│   ├── test_auth.py
-│   ├── test_users.py
-│   ├── test_projects.py
-│   └── test_tasks.py
-│
+├── screenshots/
+│   ├── docker.png
+│   ├── swagger.png
+│   └── tests.png
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
@@ -96,89 +83,75 @@ task-management-api/
 └── README.md
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 🔐 Authentication
 
 The API uses **JWT Bearer tokens** for authentication.
 
-Users first register an account and then log in to receive an access
-token.
+Users first register an account and then log in to receive an access token.
 
-Protected endpoints require the token in the request header:
+Protected endpoints require:
 
-``` text
+```text
 Authorization: Bearer <access_token>
 ```
 
-Users can only access, modify, or delete projects and tasks that belong
-to projects they own.
+Users can only access, modify, or delete projects and tasks that belong to projects they own.
 
-------------------------------------------------------------------------
+---
 
 ## 📡 API Endpoints
 
 ### Authentication
 
-   Method  Endpoint        Description
-  -------- --------------- --------------------------
-   `POST`  `/auth/login`   Log in and receive a JWT
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/auth/login` | Log in and receive a JWT |
 
 ### Users
 
-    Method   Endpoint                      Description
-  ---------- ----------------------------- -----------------------------
-    `POST`   `/users/`                     Create a user
-    `GET`    `/users/`                     Get users
-    `GET`    `/users/{user_id}`            Get a specific user
-    `PUT`    `/users/{user_id}`            Update a user
-   `DELETE`  `/users/{user_id}`            Delete a user
-    `GET`    `/users/{user_id}/projects`   Get a user's projects
-    `GET`    `/users/{user_id}/tasks`      Get a user's assigned tasks
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/users/` | Create a user |
+| `GET` | `/users/` | Get users |
+| `GET` | `/users/{user_id}` | Get a specific user |
+| `PUT` | `/users/{user_id}` | Update a user |
+| `DELETE` | `/users/{user_id}` | Delete a user |
+| `GET` | `/users/{user_id}/projects` | Get a user's projects |
+| `GET` | `/users/{user_id}/tasks` | Get a user's assigned tasks |
 
 ### Projects
 
-  -------------------------------------------------------------------------------------
-               Method              Endpoint                         Description
-  -------------------------------- -------------------------------- -------------------
-               `GET`               `/projects/`                     Get projects
-
-               `GET`               `/projects/{project_id}`         Get a specific
-                                                                    project
-
-               `POST`              `/projects/`                     Create a project
-
-               `PUT`               `/projects/{project_id}`         Update a project
-
-              `DELETE`             `/projects/{project_id}`         Delete a project
-
-               `GET`               `/projects/{project_id}/tasks`   Get tasks belonging
-                                                                    to a project
-  -------------------------------------------------------------------------------------
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/projects/` | Get projects |
+| `GET` | `/projects/{project_id}` | Get a specific project |
+| `POST` | `/projects/` | Create a project |
+| `PUT` | `/projects/{project_id}` | Update a project |
+| `DELETE` | `/projects/{project_id}` | Delete a project |
+| `GET` | `/projects/{project_id}/tasks` | Get tasks belonging to a project |
 
 ### Tasks
 
-    Method   Endpoint                  Description
-  ---------- ------------------------- ------------------------------------
-    `GET`    `/tasks/`                 Get tasks from the user's projects
-    `GET`    `/tasks/{task_id}`        Get a specific task
-    `POST`   `/tasks/`                 Create a task
-    `PUT`    `/tasks/{task_id}`        Update a task
-   `DELETE`  `/tasks/{task_id}`        Delete a task
-    `GET`    `/tasks/{task_id}/user`   Get the user assigned to a task
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/tasks/` | Get tasks from the user's projects |
+| `GET` | `/tasks/{task_id}` | Get a specific task |
+| `POST` | `/tasks/` | Create a task |
+| `PUT` | `/tasks/{task_id}` | Update a task |
+| `DELETE` | `/tasks/{task_id}` | Delete a task |
+| `GET` | `/tasks/{task_id}/user` | Get the user assigned to a task |
 
-A task can also be moved between projects by updating its `project_id`
-through the task update endpoint, provided the user owns both projects.
+A task can also be moved between projects by updating its `project_id`, provided the user owns both projects.
 
-------------------------------------------------------------------------
+---
 
 ## 🗄️ Database
 
 The application uses **PostgreSQL** with **SQLAlchemy** as the ORM.
 
-The main relationships are:
-
-``` text
+```text
 User
  │
  ├── owns Projects
@@ -192,215 +165,155 @@ User
 
 Projects contain an `owner_id`, which is used to enforce authorization.
 
-Tasks contain:
+Tasks contain `project_id` and `assigned_to`.
 
--   `project_id`
--   `assigned_to`
-
-This allows tasks to belong to projects and be assigned to users.
-
-------------------------------------------------------------------------
+---
 
 ## ⚙️ Environment Variables
 
-For local development, create a `.env` file in the project root.
+For local development, create a `.env` file:
 
-Example:
-
-``` env
+```env
 DATABASE_URL=postgresql+psycopg://postgres:YOUR_PASSWORD@localhost:5432/task_management
 ```
 
-For testing, create a separate `.env.test` file:
+For testing, create `.env.test`:
 
-``` env
+```env
 TEST_DATABASE_URL=postgresql+psycopg://postgres:YOUR_PASSWORD@localhost:5432/task_management_test
 ```
 
-For Docker, create a `.env.docker` file:
+For Docker, create `.env.docker`:
 
-``` env
+```env
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=YOUR_DOCKER_PASSWORD
 POSTGRES_DB=task_management
 ```
 
-The `.env`, `.env.test`, and `.env.docker` files contain local
-credentials and should not be committed to GitHub.
+These files contain local credentials and should not be committed to GitHub. An `.env.example` file is included for reference.
 
-An `.env.example` file is included so the required local environment
-variables can be seen without exposing credentials.
-
-------------------------------------------------------------------------
+---
 
 ## 📦 Installation
 
-Clone the repository and enter the project directory:
-
-``` bash
+```bash
 git clone https://github.com/versionMichael/task-management-api
 cd task-management-api
-```
-
-Create a virtual environment:
-
-``` bash
 python -m venv .venv
 ```
 
-Activate it on Windows:
+Activate on Windows:
 
-``` powershell
+```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-Install the dependencies:
+Install dependencies:
 
-``` bash
+```bash
 pip install -r requirements.txt
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 🗃️ Database Setup
 
-For local development, create the PostgreSQL databases used by the
-application and tests.
+For local development, create the PostgreSQL databases specified in `.env` and `.env.test`.
 
-The application database should match the database specified in `.env`.
+When using Docker Compose, PostgreSQL is created and managed automatically by the PostgreSQL container.
 
-The test database should match the database specified in `.env.test`.
-
-When using Docker Compose, PostgreSQL is created and managed
-automatically by the PostgreSQL container.
-
-------------------------------------------------------------------------
+---
 
 ## 🐳 Running with Docker
 
-The project uses **Docker Compose** to run the FastAPI application and
-PostgreSQL database as separate containers.
+Make sure Docker Desktop is running, then:
 
-Make sure Docker Desktop is running, then start the application with:
-
-``` bash
+```bash
 docker compose --env-file .env.docker up --build
 ```
 
-Docker Compose will:
-
-1.  Build the FastAPI application image from the `Dockerfile`.
-2.  Pull and start the PostgreSQL 17 image.
-3.  Create a persistent PostgreSQL volume.
-4.  Run a PostgreSQL health check.
-5.  Wait for PostgreSQL to become healthy before starting the API.
-6.  Start the FastAPI application with Uvicorn.
+Docker Compose will build the FastAPI image, start PostgreSQL 17, create persistent storage, run a health check, wait for PostgreSQL to become healthy, and start Uvicorn.
 
 The API will be available at:
 
-``` text
+```text
 http://localhost:8000
 ```
 
-### Interactive API Documentation
+Swagger documentation:
 
-Open the Swagger documentation at:
-
-``` text
+```text
 http://localhost:8000/docs
 ```
 
-To stop the containers, press `Ctrl+C` in the terminal running Docker
-Compose.
+Stop the containers with `Ctrl+C`.
 
-------------------------------------------------------------------------
+---
 
 ## ▶️ Running the API Locally
 
-If you are not using Docker, start the development server with:
+Without Docker:
 
-``` bash
+```bash
 uvicorn app.main:app --reload
 ```
 
-The API will be available at:
+API:
 
-``` text
+```text
 http://localhost:8000
 ```
 
-FastAPI provides interactive Swagger documentation at:
+Swagger:
 
-``` text
+```text
 http://localhost:8000/docs
 ```
 
-You can use the `/docs` interface to register users, log in, authorize
-with a JWT, and test the protected endpoints.
+You can use Swagger to register users, log in, authorize with a JWT, and test protected endpoints.
 
-------------------------------------------------------------------------
+---
 
 ## 🧪 Running Tests
 
-The project uses **pytest** for automated testing.
+Run the complete test suite:
 
-Run the complete test suite with:
-
-``` bash
+```bash
 pytest
 ```
 
-The tests use a separate PostgreSQL test database so application data is
-not affected.
+The tests use a separate PostgreSQL test database so application data is not affected.
 
-### Test Coverage
+The suite contains **33 tests** covering:
 
-The test suite contains **33 tests** covering:
-
--   Authentication
--   JWT authentication failures
--   User operations
--   User authorization
--   Project operations
--   Project ownership
--   Task operations
--   Task ownership
--   Task assignment
--   Moving tasks between projects
+- Authentication
+- JWT authentication failures
+- User operations and authorization
+- Project operations and ownership
+- Task operations and ownership
+- Task assignment
+- Moving tasks between projects
 
 **All 33 tests pass.**
 
-------------------------------------------------------------------------
+---
 
 ## 🔬 Testing Strategy
 
-The tests use reusable pytest fixtures defined in `tests/conftest.py`.
+Reusable pytest fixtures are defined in `tests/conftest.py`.
 
-The `client` fixture provides a FastAPI `TestClient` connected to the
-test database.
+The `client` fixture provides a FastAPI `TestClient` connected to the test database.
 
-The `test_user` fixture automatically creates a unique test user using
-UUIDs so tests do not conflict with one another.
+The `test_user` fixture creates unique test users using UUIDs so tests do not conflict with one another.
 
-Example:
-
-``` python
-def test_create_project(client, test_user):
-    ...
-```
-
-This allows tests to reuse the same setup without manually creating
-users for every test.
-
-------------------------------------------------------------------------
+---
 
 ## 🛡️ Authorization
 
 The API enforces ownership at the project level.
 
-For example:
-
-``` text
+```text
 User A
   │
   └── Project A
@@ -410,51 +323,30 @@ User A
 
 User A can access and modify Project A and Task A.
 
-Another user:
+Another user cannot access, modify, or delete User A's project or its tasks.
 
-``` text
-User B
-```
+Unauthenticated requests return `401 Unauthorized`.
 
-cannot access, modify, or delete User A's project or its tasks.
+Authenticated users attempting to access resources they do not own receive `403 Forbidden`.
 
-### Response Codes
-
-Unauthenticated requests return:
-
-``` text
-401 Unauthorized
-```
-
-Authenticated users attempting to access resources they do not own
-receive:
-
-``` text
-403 Forbidden
-```
-
-------------------------------------------------------------------------
+---
 
 ## ❌ Error Handling
 
-The API returns appropriate HTTP status codes for common errors:
+| Status Code | Meaning |
+|---|---|
+| `200` | Successful request |
+| `401` | Authentication required or invalid credentials/token |
+| `403` | Authenticated but not authorized |
+| `404` | Requested resource does not exist |
 
-   Status Code  Meaning
-  ------------- ------------------------------------------------------
-      `200`     Successful request
-      `401`     Authentication required or invalid credentials/token
-      `403`     Authenticated but not authorized
-      `404`     Requested resource does not exist
-
-------------------------------------------------------------------------
+---
 
 ## 🔒 Security
 
--   Passwords are hashed before being stored.
--   Passwords and password hashes are not returned in API responses.
--   Protected endpoints require JWT authentication.
--   Users cannot access or modify projects they do not own.
--   Users cannot access or modify tasks belonging to another user's
-    project.
--   Environment files containing credentials are excluded from version
-    control.
+- Passwords are hashed before being stored.
+- Passwords and password hashes are not returned in API responses.
+- Protected endpoints require JWT authentication.
+- Users cannot access or modify projects they do not own.
+- Users cannot access or modify tasks belonging to another user's project.
+- Environment files containing credentials are excluded from version control.
