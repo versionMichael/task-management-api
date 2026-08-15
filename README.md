@@ -71,9 +71,6 @@ task-management-api/
 ├── app/
 ├── tests/
 ├── screenshots/
-│   ├── docker.png
-│   ├── swagger.png
-│   └── tests.png
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
