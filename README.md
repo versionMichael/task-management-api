@@ -1,10 +1,15 @@
 # Task Management API
 
-A RESTful task management backend built with **FastAPI**,
-**PostgreSQL**, **SQLAlchemy**, and **JWT authentication**.
+A RESTful task management backend built with **FastAPI**, **PostgreSQL**, **SQLAlchemy**, and **JWT authentication**.
 
 The API allows authenticated users to create and manage projects and
 tasks while enforcing ownership and authorization rules.
+
+**Live API:** https://task-management-api-production-47aa.up.railway.app
+
+**Swagger Docs:** https://task-management-api-production-47aa.up.railway.app/docs
+
+---
 
 ------------------------------------------------------------------------
 
